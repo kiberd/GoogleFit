@@ -150,6 +150,9 @@ public class MainActivity extends AppCompatActivity {
     // 수면단계 결정 ( getTimeInMillis() 형식 스타트,엔드 )
     private void setSleepStage(){
 
+        // 출력을 위한 어레이리스트
+        final ArrayList<String> heartLateList = new ArrayList<>();
+
         // Range : 지난 7일동안
         Calendar start = Calendar.getInstance();
         start.set(Calendar.YEAR, 2019);
@@ -190,8 +193,11 @@ public class MainActivity extends AppCompatActivity {
 
 
                         SimpleDateFormat format = new SimpleDateFormat("d일:h시:mm분");
+                        as = findViewById(R.id.a);
+                        as.setText(format.format(startTime) + " " + format.format(endTime));
+
                         bs = findViewById(R.id.b);
-                        bs.setText(format.format(endTime - startTime) + " " + format.format(endTime));
+                        bs.setText("G : " + G);
 
 
                         DataSet dataSet = response.getDataSet(DataType.TYPE_HEART_RATE_BPM);
@@ -213,7 +219,9 @@ public class MainActivity extends AppCompatActivity {
                                         else{ // 얕은 수면
                                             sleepStage[1] += 1;
                                         }
-                                    }
+                                }
+
+                                heartLateList.add(format.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " Value: " + dp.getValue(field) + ", S : " + S);
 
                                 }
                             }
@@ -221,6 +229,11 @@ public class MainActivity extends AppCompatActivity {
                         cs.setText("기상 : " + sleepStage[0] +", 얕은수면 : " + sleepStage[1] + ", 깊은수면 : " + sleepStage[2]);
                     }
                 });
+
+        ListView printView = (ListView)findViewById(R.id.bpm);
+        final ArrayAdapter<String> timeAdabtor = new ArrayAdapter<String>(
+                this, android.R.layout.simple_list_item_1, heartLateList);
+        printView.setAdapter(timeAdabtor);
 
 
     }
@@ -252,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DataReadResponse response) {
 
-                        as = findViewById(R.id.a);
+//                      as = findViewById(R.id.a);
 
                         float count = 0, total = 0;
                         DataSet dataSet = response.getDataSet(DataType.TYPE_HEART_RATE_BPM);
@@ -274,19 +287,19 @@ public class MainActivity extends AppCompatActivity {
                                 count++;
                                 total += Float.valueOf(String.valueOf(dp.getValue(field)));
 
-                                heartLateList.add(format.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " Value: " + dp.getValue(field));
+                                //heartLateList.add(format.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " Value: " + dp.getValue(field));
                                 //bs.setText("\t가장 최근 동기화된 시각: " + format.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " Value: " + dp.getValue(field));
                             }
                             avg_bpm = total / count;
-                            as.setText("data수 : " + count + ", AVG : " + Math.round(avg_bpm) + ", MIN : " + Math.round(min_bpm));
+                            //as.setText("data수 : " + count + ", AVG : " + Math.round(avg_bpm) + ", MIN : " + Math.round(min_bpm));
                         }
                     }
                 });
 
-        ListView printView = (ListView)findViewById(R.id.bpm);
-        final ArrayAdapter<String> timeAdabtor = new ArrayAdapter<String>(
-                this, android.R.layout.simple_list_item_1, heartLateList);
-        printView.setAdapter(timeAdabtor);
+//        ListView printView = (ListView)findViewById(R.id.bpm);
+//        final ArrayAdapter<String> timeAdabtor = new ArrayAdapter<String>(
+//                this, android.R.layout.simple_list_item_1, heartLateList);
+//        printView.setAdapter(timeAdabtor);
 
     }
 }
